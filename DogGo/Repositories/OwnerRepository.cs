@@ -5,20 +5,16 @@ using System.Collections.Generic;
 
 namespace DogGo.Repositories
 {
-    public class WalkerRepository : IWalkerRepository
-    { 
-
-        // readonly - once we set the value of the _config property, we can't change it. readonly is a similar effect as a property with only a get
+    public class OwnerRepository : IOwnerRepository
+    {
         private readonly IConfiguration _config;
 
         // The constructor accepts an IConfiguration object as a parameter. This class comes from the ASP.NET framework and is useful for retrieving things out of the appsettings.json file like connection strings.
-        public WalkerRepository(IConfiguration config)
+        public OwnerRepository(IConfiguration config)
         {
             _config = config;
         }
 
-        // Below is a computed property. Adds connection property directly to WalkerRepository rather than using base class. "DefaultConnection" reads what's listed in the appsettings.json file. Go out and 
-        // get the connection and then return it.
         public SqlConnection Connection
         {
             get
@@ -27,7 +23,7 @@ namespace DogGo.Repositories
             }
         }
 
-        public List<Walker> GetAllWalkers()
+        public List<Owner> GetAllOwners()
         {
             using (SqlConnection conn = Connection)
             {
@@ -35,41 +31,36 @@ namespace DogGo.Repositories
                 using (SqlCommand cmd = conn.CreateCommand())
                 {
                     cmd.CommandText = @"
-                        SELECT w.Id, w.[Name], w.ImageUrl, n.Id as NeighborhoodId, n.Name as NeighborhoodName
-                        FROM Walker w
-                        Left Join Neighborhood n on w.NeighborhoodId = n.Id;
+                        SELECT Id, Email, [Name], Address, NeighborhoodId, Phone 
+                        FROM Owner
                     ";
 
                     SqlDataReader reader = cmd.ExecuteReader();
 
-                    List<Walker> walkers = new List<Walker>();
+                    List<Owner> owners = new List<Owner>();
                     while (reader.Read())
                     {
-                        Walker walker = new Walker
+                        Owner owner = new Owner
                         {
                             Id = reader.GetInt32(reader.GetOrdinal("Id")),
+                            Email = reader.GetString(reader.GetOrdinal("Email")),
                             Name = reader.GetString(reader.GetOrdinal("Name")),
-                            ImageUrl = reader.GetString(reader.GetOrdinal("ImageUrl")),
+                            Address = reader.GetString(reader.GetOrdinal("Address")),
                             NeighborhoodId = reader.GetInt32(reader.GetOrdinal("NeighborhoodId")),
+                            Phone = reader.GetString(reader.GetOrdinal("Phone"))
                         };
 
-                        walker.Neighborhood = new Neighborhood
-                        {
-                            Id = reader.GetInt32(reader.GetOrdinal("NeighborhoodId")),
-                            Name = reader.GetString(reader.GetOrdinal("NeighborhoodName")),
-                        };
-
-                        walkers.Add(walker);
+                        owners.Add(owner);
                     }
 
                     reader.Close();
 
-                    return walkers;
+                    return owners;
                 }
             }
         }
 
-        public Walker GetWalkerById(int id)
+        public Owner GetOwnerById(int id)
         {
             using (SqlConnection conn = Connection)
             {
@@ -77,10 +68,9 @@ namespace DogGo.Repositories
                 using (SqlCommand cmd = conn.CreateCommand())
                 {
                     cmd.CommandText = @"
-                        SELECT w.Id, w.[Name], w.ImageUrl, n.Id as NeighborhoodId, n.Name as NeighborhoodName
-                        FROM Walker w
-                        Left Join Neighborhood n on w.NeighborhoodId = n.Id
-                        WHERE w.Id = @id
+                        SELECT Id, Email, [Name], Address, NeighborhoodId, Phone 
+                        FROM Owner
+                        WHERE Id = @id
                     ";
 
                     cmd.Parameters.AddWithValue("@id", id);
@@ -89,22 +79,18 @@ namespace DogGo.Repositories
 
                     if (reader.Read())
                     {
-                        Walker walker = new Walker
+                        Owner owner = new Owner
                         {
                             Id = reader.GetInt32(reader.GetOrdinal("Id")),
+                            Email = reader.GetString(reader.GetOrdinal("Email")),
                             Name = reader.GetString(reader.GetOrdinal("Name")),
-                            ImageUrl = reader.GetString(reader.GetOrdinal("ImageUrl")),
-                            NeighborhoodId = reader.GetInt32(reader.GetOrdinal("NeighborhoodId"))
-                        };
-
-                        walker.Neighborhood = new Neighborhood
-                        {
-                            Id = reader.GetInt32(reader.GetOrdinal("NeighborhoodId")),
-                            Name = reader.GetString(reader.GetOrdinal("NeighborhoodName")),
+                            Address = reader.GetString(reader.GetOrdinal("Address")),
+                            NeighborhoodId = reader.GetInt32(reader.GetOrdinal("NeighborhoodId")),
+                            Phone = reader.GetString(reader.GetOrdinal("Phone"))
                         };
 
                         reader.Close();
-                        return walker;
+                        return owner;
                     }
                     else
                     {
