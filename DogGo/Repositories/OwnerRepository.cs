@@ -90,16 +90,6 @@ namespace DogGo.Repositories
                                     Phone = reader.GetString(reader.GetOrdinal("Phone"))
                                 };
 
-                                owner.Dogs = new List<Dog>();
-
-                                owner.Dog = new Dog
-                                {
-                                    Id = reader.GetInt32(reader.GetOrdinal("DogId")),
-                                    Name = reader.GetString(reader.GetOrdinal("DogName")),
-                                };
-
-                                owner.Dogs.Add(owner.Dog);
-
                                 reader.Close();
 
                                 return owner;
