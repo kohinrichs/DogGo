@@ -35,7 +35,7 @@ namespace DogGo.Repositories
                 using (SqlCommand cmd = conn.CreateCommand())
                 {
                     cmd.CommandText = @"
-                        SELECT w.Id, w.[Name], w.ImageUrl, n.Id as NeighborhoodId, n.Name as NeighborhoodName
+                        SELECT w.Id, w.[Name], w.ImageUrl, n.Id as NeighborhoodId, n.[Name] as NeighborhoodName
                         FROM Walker w
                         Left Join Neighborhood n on w.NeighborhoodId = n.Id;
                     ";
@@ -77,7 +77,7 @@ namespace DogGo.Repositories
                 using (SqlCommand cmd = conn.CreateCommand())
                 {
                     cmd.CommandText = @"
-                        SELECT w.Id, w.[Name], w.ImageUrl, n.Id as NeighborhoodId, n.Name as NeighborhoodName
+                        SELECT w.Id, w.[Name], w.ImageUrl, n.Id as NeighborhoodId, n.[Name] as NeighborhoodName
                         FROM Walker w
                         Left Join Neighborhood n on w.NeighborhoodId = n.Id
                         WHERE w.Id = @id

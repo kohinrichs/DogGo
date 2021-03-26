@@ -32,7 +32,7 @@ namespace DogGo.Repositories
                 {
                     cmd.CommandText = @"
                         SELECT Id, Email, [Name], Address, NeighborhoodId, Phone 
-                        FROM Owner
+                        FROM [Owner]
                     ";
 
                     SqlDataReader reader = cmd.ExecuteReader();
@@ -69,7 +69,7 @@ namespace DogGo.Repositories
                 {
                     cmd.CommandText = @"
                         SELECT Id, Email, [Name], Address, NeighborhoodId, Phone 
-                        FROM Owner
+                        FROM [Owner]
                         WHERE Id = @id
                     ";
 
@@ -110,7 +110,7 @@ namespace DogGo.Repositories
                 {
                     cmd.CommandText = @"
                         SELECT Id, [Name], Email, Address, Phone, NeighborhoodId
-                        FROM Owner
+                        FROM [Owner]
                         WHERE Email = @email";
 
                     cmd.Parameters.AddWithValue("@email", email);
@@ -147,7 +147,7 @@ namespace DogGo.Repositories
                 using (SqlCommand cmd = conn.CreateCommand())
                 {
                     cmd.CommandText = @"
-                    INSERT INTO Owner ([Name], Email, Phone, Address, NeighborhoodId)
+                    INSERT INTO [Owner] ([Name], Email, Phone, Address, NeighborhoodId)
                     OUTPUT INSERTED.ID
                     VALUES (@name, @email, @phoneNumber, @address, @neighborhoodId);
                 ";
@@ -174,7 +174,7 @@ namespace DogGo.Repositories
                 using (SqlCommand cmd = conn.CreateCommand())
                 {
                     cmd.CommandText = @"
-                            UPDATE Owner
+                            UPDATE [Owner]
                             SET 
                                 [Name] = @name, 
                                 Email = @email, 
@@ -204,7 +204,7 @@ namespace DogGo.Repositories
                 using (SqlCommand cmd = conn.CreateCommand())
                 {
                     cmd.CommandText = @"
-                            DELETE FROM Owner
+                            DELETE FROM [Owner]
                             WHERE Id = @id
                         ";
 
