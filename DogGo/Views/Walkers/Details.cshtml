@@ -13,6 +13,9 @@
             <label class="font-weight-bold">Neighborhood:</label>
             <span>@Model.Walker.Neighborhood.Name</span>
         </div>
+        <div>
+            @Html.ActionLink("Edit", "Edit", new { id = Model.Walker.Id })
+        </div>
     </section>
 
     <hr class="mt-5" />
@@ -51,37 +54,31 @@
                     {
                         <tr>
                             <td>
-                                <div>@walk.Date</div>
+                                <div>@walk.Date.Date.ToString("MM/dd/yyyy")</div>
                             </td>
                             <td>
                                 <div>@walk.DogId</div>
                             </td>
                             <td>
-                                <div>@walk.Duration</div>
+                                <div>@(@walk.Duration/60) min</div>
                             </td>
                          </tr>
                     }
                  </tbody>
                 </table>
            </section>
-
-            @*<section class="col-lg-4 col-md-8 container mt-5">
-                <h1>Walkers Near Me</h1>
-
-                <ul class="list-group mt-4">
-                    @foreach (Walker walker in Model.Walkers)
-                    {
-                        <li class="list-group-item disabled" aria-disabled="true">
-                            <img src="@walker.ImageUrl" style="width:50px" />
-                            <span class="font-weight-bold ml-4">@walker.Name</span>
-                        </li>
-                    }
-                </ul>
-            </section>
-            *@
      </div>
 </div>
+<section class="col-lg-4 col-md-8 container mt-5">
+    <h1>Total Walk Time:</h1>
+
+    @*<ul class="list-group mt-4">
+        @foreach (Walk walk in Model.Walks)
+        {
+            @(@walk.Duration)
+        }
+    </ul> *@
+</section>
 <div>
-    @Html.ActionLink("Edit", "Edit", new { id = Model.Walker.Id }) |
     <a asp-action="Index">Back to List</a>
 </div>

@@ -70,9 +70,9 @@ namespace DogGo.Repositories
                 using (SqlCommand cmd = conn.CreateCommand())
                 {
                     cmd.CommandText = @"
-                    SELECT Id, [Date], Duration, WalkerId, DogId
-                        FROM Walks
-                        WHERE WalkerId = @walkerId
+                      SELECT w.Id, w.[Date], w.Duration, w.WalkerId, w.DogId
+                        FROM Walks w
+                        WHERE WalkerId = @walkerId;
                     ";
 
                     cmd.Parameters.AddWithValue("@walkerId", walkerId);
@@ -92,6 +92,8 @@ namespace DogGo.Repositories
                             DogId = reader.GetInt32(reader.GetOrdinal("DogId")),
                         };
                         walks.Add(walk);    
+
+                       
                     }
                     reader.Close();
                     return walks;
