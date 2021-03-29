@@ -6,10 +6,10 @@ using System.Threading.Tasks;
 
 namespace DogGo.Repositories
 {
-    public class IWalksRespository
+    public interface IWalksRespository
     {
         List<Walk> GetAllWalks();
-        Walk GetWalksById(int id);
+        List<Walk> GetWalksByWalkerId(int walkerId);
         void AddWalks(Owner owner);
         void UpdateOwner(Owner owner);
         void DeleteOwner(int ownerId);
