@@ -70,81 +70,36 @@ namespace DogGo.Repositories
                 using (SqlCommand cmd = conn.CreateCommand())
                 {
                     cmd.CommandText = @"
-                        SELECT o.Id as OwnerId, o.Email, o.[Name], o.[Address], o.NeighborhoodId, o.Phone, d.[Name] as DogName, d.Id as DogId
-                        FROM [Owner] o
-                        JOIN Dog d ON o.Id = d.OwnerId 
-                        WHERE o.Id = @id;
+                    SELECT Id, [Date], Duration, WalkerId, DogId
+                        FROM Walks
+                        WHERE WalkerId = @walkerId
                     ";
 
                     cmd.Parameters.AddWithValue("@walkerId", walkerId);
 
                     SqlDataReader reader = cmd.ExecuteReader();
 
-                    if (reader.Read())
+                    List<Walk> walks = new List<Walk>();
+
+                    while (reader.Read())
                     {
-                        Owner owner = new Owner
-                        {
-                            Id = reader.GetInt32(reader.GetOrdinal("OwnerId")),
-                            Email = reader.GetString(reader.GetOrdinal("Email")),
-                            Name = reader.GetString(reader.GetOrdinal("Name")),
-                            Address = reader.GetString(reader.GetOrdinal("Address")),
-                            NeighborhoodId = reader.GetInt32(reader.GetOrdinal("NeighborhoodId")),
-                            Phone = reader.GetString(reader.GetOrdinal("Phone"))
-                        };
-
-                        reader.Close();
-
-                        return owner;
-                    }
-
-                    else
-                    {
-                        reader.Close();
-                        return null;
-                    }
-                }
-            }
-        }
-        public Owner GetOwnerByEmail(string email)
-        {
-            using (SqlConnection conn = Connection)
-            {
-                conn.Open();
-
-                using (SqlCommand cmd = conn.CreateCommand())
-                {
-                    cmd.CommandText = @"
-                        SELECT Id, [Name], Email, Address, Phone, NeighborhoodId
-                        FROM [Owner]
-                        WHERE Email = @email";
-
-                    cmd.Parameters.AddWithValue("@email", email);
-
-                    SqlDataReader reader = cmd.ExecuteReader();
-
-                    if (reader.Read())
-                    {
-                        Owner owner = new Owner()
+                        Walk walk = new Walk
                         {
                             Id = reader.GetInt32(reader.GetOrdinal("Id")),
-                            Name = reader.GetString(reader.GetOrdinal("Name")),
-                            Email = reader.GetString(reader.GetOrdinal("Email")),
-                            Address = reader.GetString(reader.GetOrdinal("Address")),
-                            Phone = reader.GetString(reader.GetOrdinal("Phone")),
-                            NeighborhoodId = reader.GetInt32(reader.GetOrdinal("NeighborhoodId"))
+                            Date = reader.GetDateTime(reader.GetOrdinal("Date")),
+                            Duration = reader.GetInt32(reader.GetOrdinal("Duration")),
+                            WalkerId = reader.GetInt32(reader.GetOrdinal("WalkerId")),
+                            DogId = reader.GetInt32(reader.GetOrdinal("DogId")),
                         };
-
-                        reader.Close();
-                        return owner;
+                        walks.Add(walk);    
                     }
-
                     reader.Close();
-                    return null;
+                    return walks;
                 }
             }
         }
-
-        public void AddOwner(Owner owner)
+        
+        public void AddWalk(Walk walk)
         {
             using (SqlConnection conn = Connection)
             {
@@ -152,25 +107,24 @@ namespace DogGo.Repositories
                 using (SqlCommand cmd = conn.CreateCommand())
                 {
                     cmd.CommandText = @"
-                    INSERT INTO [Owner] ([Name], Email, Phone, Address, NeighborhoodId)
+                    INSERT INTO [Walks] ([Date], Duration, WalkerId, DogId)
                     OUTPUT INSERTED.ID
-                    VALUES (@name, @email, @phoneNumber, @address, @neighborhoodId);
+                    VALUES (@date, @duration, @walkerId, @dogId);
                 ";
 
-                    cmd.Parameters.AddWithValue("@name", owner.Name);
-                    cmd.Parameters.AddWithValue("@email", owner.Email);
-                    cmd.Parameters.AddWithValue("@phoneNumber", owner.Phone);
-                    cmd.Parameters.AddWithValue("@address", owner.Address);
-                    cmd.Parameters.AddWithValue("@neighborhoodId", owner.NeighborhoodId);
+                    cmd.Parameters.AddWithValue("@date", walk.Date);
+                    cmd.Parameters.AddWithValue("@duration", walk.Duration);
+                    cmd.Parameters.AddWithValue("@walkerId", walk.WalkerId);
+                    cmd.Parameters.AddWithValue("@dogId", walk.DogId);
 
                     int id = (int)cmd.ExecuteScalar();
 
-                    owner.Id = id;
+                    walk.Id = id;
                 }
             }
         }
 
-        public void UpdateOwner(Owner owner)
+        public void UpdateWalk(Walk walk)
         {
             using (SqlConnection conn = Connection)
             {
@@ -179,28 +133,26 @@ namespace DogGo.Repositories
                 using (SqlCommand cmd = conn.CreateCommand())
                 {
                     cmd.CommandText = @"
-                            UPDATE [Owner]
+                            UPDATE [Walk]
                             SET 
-                                [Name] = @name, 
-                                Email = @email, 
-                                Address = @address, 
-                                Phone = @phone, 
-                                NeighborhoodId = @neighborhoodId
+                                [Date] = @date, 
+                                Duration = @duration, 
+                                WalkerId = @walkerId, 
+                                DogId = @dogId
                             WHERE Id = @id";
 
-                    cmd.Parameters.AddWithValue("@name", owner.Name);
-                    cmd.Parameters.AddWithValue("@email", owner.Email);
-                    cmd.Parameters.AddWithValue("@address", owner.Address);
-                    cmd.Parameters.AddWithValue("@phone", owner.Phone);
-                    cmd.Parameters.AddWithValue("@neighborhoodId", owner.NeighborhoodId);
-                    cmd.Parameters.AddWithValue("@id", owner.Id);
+                    cmd.Parameters.AddWithValue("@date", walk.Date);
+                    cmd.Parameters.AddWithValue("@duration", walk.Duration);
+                    cmd.Parameters.AddWithValue("@walkerId", walk.WalkerId);
+                    cmd.Parameters.AddWithValue("@dogId", walk.DogId);
+                    cmd.Parameters.AddWithValue("@id", walk.Id);
 
                     cmd.ExecuteNonQuery();
                 }
             }
         }
 
-        public void DeleteOwner(int ownerId)
+        public void DeleteWalk(int walkId)
         {
             using (SqlConnection conn = Connection)
             {
@@ -209,11 +161,11 @@ namespace DogGo.Repositories
                 using (SqlCommand cmd = conn.CreateCommand())
                 {
                     cmd.CommandText = @"
-                            DELETE FROM [Owner]
+                            DELETE FROM [Walk]
                             WHERE Id = @id
                         ";
 
-                    cmd.Parameters.AddWithValue("@id", ownerId);
+                    cmd.Parameters.AddWithValue("@id", walkId);
 
                     cmd.ExecuteNonQuery();
                 }
