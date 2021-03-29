@@ -13,7 +13,7 @@ namespace DogGo.Controllers
     {
         private readonly IDogRepository _dogRepo;
 
-        // ASP.NET will give us an instance of our Walker Repository. This is called "Dependency Injection"
+        // ASP.NET will give us an instance of our Dog Repository. This is called "Dependency Injection"
         public DogsController(IDogRepository dogRepository)
         {
             _dogRepo = dogRepository;
