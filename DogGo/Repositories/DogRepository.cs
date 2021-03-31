@@ -70,7 +70,7 @@ namespace DogGo.Repositories
             }
         }
 
-        public Dog GetDogById(int id)
+        public Dog GetDogById(int id, int ownerId)
         {
             using (SqlConnection conn = Connection)
             {
@@ -80,10 +80,11 @@ namespace DogGo.Repositories
                     cmd.CommandText = @"
                         SELECT Id, [Name], OwnerId, Breed, Notes, ImageUrl 
                         FROM Dog
-                        WHERE Id = @id
+                        WHERE Id = @id AND OwnerId = @ownerId
                     ";
 
                     cmd.Parameters.AddWithValue("@id", id);
+                    cmd.Parameters.AddWithValue("@ownerId", ownerId);
 
                     SqlDataReader reader = cmd.ExecuteReader();
 
